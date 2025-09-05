@@ -1,0 +1,66 @@
+openapi: 3.1.0
+info:
+  title: Ula RAG API
+  version: "1.0.0"
+  description: Proste API do zapytań RAG. Zwraca odpowiedź i listę źródeł.
+servers:
+  - url: https://ula-rag.onrender.com
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: health
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /query:
+    post:
+      summary: Zadaj pytanie do bazy RAG
+      operationId: ragQuery
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  example: "Jak krok po kroku wspierać dziecko z mutyzmem wybiórczym w przedszkolu?"
+                top_k:
+                  type: integer
+                  default: 5
+                filters:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Odpowiedź z RAG
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [answer]
+                properties:
+                  answer:
+                    type: string
+                    example: "Zacznij od mikro-zadań..."
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:    { type: string, example: "doc_0345#p12" }
+                        title: { type: string, example: "Przewodnik: start w przedszkolu" }
+                        url:   { type: string, nullabl
